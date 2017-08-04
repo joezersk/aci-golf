@@ -49,7 +49,7 @@ ip domain name cisco.com
 subscriber templating
 ! 
 !
-<B>vxlan udp port 48879</B>
+vxlan udp port 48879
 !
 !
 multilink bundle-name authenticated
