@@ -1,0 +1,164 @@
+Current configuration : 5511 bytes
+!
+! Last configuration change at 16:16:01 CEST Mon Jul 31 2017
+!
+version 16.5
+service config
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+platform console auto
+!
+hostname BGP-WAN-GOLF
+!
+boot-start-marker
+boot-end-marker
+!
+vrf definition joe
+ rd 5:5
+ !
+ address-family ipv4
+  route-target export 100:10
+  route-target import 100:10
+ exit-address-family
+!
+vrf definition mgmt
+ !
+ address-family ipv4
+ exit-address-family
+!
+no logging console
+enable password 7 12485744463A1B0138
+!
+no aaa new-model
+clock timezone CET 1 0
+clock summer-time CEST date Mar 2 2017 2:00 Nov 1 2035 2:00
+!
+!
+no ip domain lookup
+ip domain name cisco.com
+!
+!         
+subscriber templating
+! 
+!
+multilink bundle-name authenticated
+!
+domain Fabric1
+!
+!
+license udi pid CSR1000V sn 9ZP3GDRH0GN
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+username admin privilege 15 password 7 1446405858353D2E36
+!
+redundancy
+!
+!
+cdp run
+!
+!
+interface Loopback0
+ description used for setting up manual BGP to Both GOLF Routers
+ ip address 111.44.44.44 255.255.255.255
+!
+interface Loopback3
+ vrf forwarding joe
+ ip address 172.1.1.1 255.255.255.255
+!
+interface Loopback4
+ no ip address
+!
+interface GigabitEthernet1
+ description management access vlan 100 (Not Part of GOLF)
+ vrf forwarding mgmt
+ ip address 10.50.128.4 255.255.255.0
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ description BGP_WAN_LINK_GOLF_WEST
+ ip address 100.1.1.1 255.255.255.0
+ negotiation auto
+ mpls ip
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet3
+ description BGP_WAN_LINK_GOLF_EAST
+ ip address 100.2.2.1 255.255.255.0
+ negotiation auto
+ mpls ip
+ no mop enabled
+ no mop sysid
+!
+router ospf 100
+ router-id 111.44.44.44
+ network 100.1.1.1 0.0.0.0 area 0
+ network 100.2.2.1 0.0.0.0 area 0
+ network 111.44.44.44 0.0.0.0 area 0
+!
+router bgp 3
+ bgp router-id 111.44.44.44
+ bgp log-neighbor-changes
+ no bgp default ipv4-unicast
+ no bgp default route-target filter
+ neighbor 111.33.33.33 remote-as 3
+ neighbor 111.33.33.33 update-source Loopback0
+ neighbor 222.33.33.33 remote-as 3
+ neighbor 222.33.33.33 update-source Loopback0
+ !
+ address-family vpnv4
+  import l2vpn evpn re-originate stitching-rt
+  neighbor 111.33.33.33 activate
+  neighbor 111.33.33.33 send-community both
+  neighbor 111.33.33.33 next-hop-self all
+  neighbor 222.33.33.33 activate
+  neighbor 222.33.33.33 send-community both
+  neighbor 222.33.33.33 next-hop-self all
+ exit-address-family
+ !
+ address-family ipv4 vrf joe
+  redistribute connected
+ exit-address-family
+!
+threat-visibility
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip route vrf mgmt 0.0.0.0 0.0.0.0 10.50.128.10
+!
+ip ssh version 2
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+!
+route-map PREPEND permit 10
+!
+!
+control-plane
+!         
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 90 0
+ privilege level 15
+ login local
+ transport preferred ssh
+ transport input ssh
+!
+ntp server 173.38.201.115
+!
+!
+end
