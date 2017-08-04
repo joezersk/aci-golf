@@ -1,6 +1,8 @@
 # aci-golf
 <P>
-This repo contains the sampe running configurations of ACI GOLF Routers, which are peering with the fabric spines across an existing multipod setup.  I also include an optional configuration for an MPLS-PE router, which is not integrated with ACI but used to simulate a greater WAN network and test routing and connectivity towards ACI via the GOLF routers.  All example routers are using the Cisco CSR1Kv virtual router, which is not supported in GOLF production environments, but is suitable for design and lab testing of GOLF.  I am using the demo version, which is limited in capability but without the need to spend any money to test.
+This repo contains the sampe running configurations of ACI GOLF Routers, which are peering with the fabric spines across an existing multipod setup.  I also include an optional configuration for an MPLS-PE router, which is not integrated with ACI but used to simulate a greater WAN network and test routing and connectivity towards ACI via the GOLF routers.  
+<p>
+All example routers are based on the Cisco CSR1Kv virtual router, which is not supported in GOLF production environments, but is suitable for design and lab testing.  I am using the freely downloadable demo version, which is limited in capability, but still able to run GOLF.
 <p>
 Please review the topology I have below.  Note that this does not represent a true production setup as my lab is limited and lacking redundancy at many levels, including spines, IPN devices and GOLF routers.  <B>This is an example only</B>.  In your real world, you would refer to any official Cisco design guide and account for failure domains and redundancy as appropriate.  This is not that.
 <p>
