@@ -14,4 +14,4 @@ Please review the topology I have below.  Note that this does not represent a tr
 <p>
 <hr>
 <p>
-<img src="https://github.com/joezersk/aci-golf/blob/master/ACI-GOLF-Sample-Topo2.png">
+<img src="https://github.com/joezersk/aci-golf/blob/master/ACI-GOLF-Sample-Topo3.png">
