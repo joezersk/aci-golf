@@ -2,7 +2,7 @@ Current configuration : 7281 bytes
 !
 ! Last configuration change at 08:18:32 CEST Mon Jul 31 2017 by admin
 !
-<B>version 16.5</B>
+version 16.5
 service timestamps debug datetime msec
 service timestamps log datetime msec
 service password-encryption
