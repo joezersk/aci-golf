@@ -16,19 +16,6 @@ boot-start-marker
 boot-end-marker
 !
 !
-vrf definition joe
- rd 1:1002
- !
- address-family ipv4
-  route-target export 100:10
-  route-target import 100:10
-  route-target export 100:10 stitching
-  route-target import 100:10 stitching
- exit-address-family
- !
- address-family ipv6
- exit-address-family
-!
 vrf definition mgmt
  !
  address-family ipv4
@@ -64,8 +51,6 @@ spanning-tree extend system-id
 username admin privilege 15 password 7 101F5B4A5126050E1E
 !
 redundancy
-bridge-domain 8189 
- member vni 15000002
 !
 !
 interface Loopback0
@@ -103,15 +88,9 @@ interface nve1
  source-interface Loopback0
  host-reachability protocol bgp
  vxlan udp port 48879
- member vni 15000002 vrf joe
  no mop enabled
  no mop sysid
 !
-interface BDI8189
- vrf forwarding joe
- ip address 100.2.1.1 255.255.255.0
- no mop enabled
- no mop sysid
 !         
 router ospf 100
  router-id 111.33.33.33
@@ -154,12 +133,7 @@ router bgp 3
   neighbor 222.222.222.222 route-map PREPEND out
  exit-address-family
  !
- address-family ipv4 vrf joe
-  advertise l2vpn evpn
-  redistribute connected
- exit-address-family
 !
-
 threat-visibility
 !
 virtual-service csr_mgmt
@@ -192,8 +166,7 @@ route-map PREPEND permit 10
 !
 !
 control-plane
-!
-!         
+!     
 line con 0
  stopbits 1
 line vty 0 4
