@@ -17,19 +17,6 @@ boot system bootflash:csr1000v-universalk9.16.05.01b.SPA.bin
 boot-end-marker
 !
 !
-vrf definition joe
- rd 1:1007
- !
- address-family ipv4
-  route-target export 100:10
-  route-target import 100:10
-  route-target export 100:10 stitching
-  route-target import 100:10 stitching
- exit-address-family
- !
- address-family ipv6
- exit-address-family
-!
 vrf definition mgmt
  !
  address-family ipv4
@@ -42,15 +29,11 @@ clock timezone CET 1 0
 clock summer-time CEST date Mar 2 2017 2:00 Nov 1 2035 2:00
 !
 !
-
 no ip domain lookup
 ip domain name cisco.com
 !
 !
 subscriber templating
-! 
-! 
-! 
 ! 
 !
 vxlan udp port 48879
@@ -59,7 +42,6 @@ vxlan udp port 48879
 multilink bundle-name authenticated
 !
 domain FabricP2
-!
 !
 !
 password encryption aes
@@ -73,8 +55,6 @@ spanning-tree extend system-id
 username admin privilege 15 password 7 00554155506A1C031D
 !
 redundancy
-bridge-domain 8188 
- member vni 15000004
 !
 !
 cdp run
@@ -118,11 +98,6 @@ interface nve1
  no mop enabled
  no mop sysid
 !
-interface BDI8188
- vrf forwarding joe
- ip address 134.2.2.1 255.255.255.0
- no mop enabled
- no mop sysid
 !
 router ospf 100
  router-id 222.33.33.33
@@ -165,12 +140,7 @@ router bgp 3
   neighbor 222.222.222.222 soft-reconfiguration inbound
  exit-address-family
  !
- address-family ipv4 vrf joe
-  advertise l2vpn evpn
-  redistribute connected
- exit-address-family
 !
-
 threat-visibility
 !
 virtual-service csr_mgmt
@@ -200,7 +170,6 @@ route-map DENY-REMOTE-HOST-ROUTES permit 20
 !
 route-map PREPEND permit 10
  set as-path prepend 3 3 3 3 3
-!
 !
 !
 control-plane
