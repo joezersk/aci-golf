@@ -1,1 +1,190 @@
-
+Current configuration : 7281 bytes
+!
+! Last configuration change at 08:18:32 CEST Mon Jul 31 2017 by admin
+!
+<B>version 16.5</B>
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+platform console auto
+!
+hostname GOLF-WEST
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition mgmt
+ !
+ address-family ipv4
+ exit-address-family
+!
+no logging console
+enable password 7 08701E1D5D28121200
+!
+no aaa new-model
+clock timezone CET 1 0
+clock summer-time CEST date Mar 2 2017 2:00 Nov 1 2035 2:00
+!
+!
+no ip domain lookup
+ip domain name cisco.com
+!
+!
+subscriber templating
+! 
+!
+vxlan udp port 48879
+!
+!
+multilink bundle-name authenticated
+!
+domain FabricP1
+!
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+username admin privilege 15 password 7 101F5B4A5126050E1E
+!
+redundancy
+!
+!
+interface Loopback0
+ description used for setting up BGP to Spines in both pods
+ ip address 111.33.33.33 255.255.255.255
+!
+!
+interface GigabitEthernet1
+ description management access vlan 100 (Not Part of GOLF)
+ vrf forwarding mgmt
+ ip address 10.50.128.3 255.255.255.0
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ description description Link facing IPN-WEST for OSPF Neighbor
+ ip address 204.1.1.1 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf mtu-ignore
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet3
+ description Connection to BGP-WAN-GOLF PE Router
+ ip address 100.1.1.2 255.255.255.0
+ negotiation auto
+ mpls ip
+ no mop enabled
+ no mop sysid
+!
+interface nve1
+ no ip address
+ source-interface Loopback0
+ host-reachability protocol bgp
+ vxlan udp port 48879
+ no mop enabled
+ no mop sysid
+!
+!         
+router ospf 100
+ router-id 111.33.33.33
+ nsr
+ network 100.1.1.2 0.0.0.0 area 0
+ network 111.33.33.33 0.0.0.0 area 0
+ network 204.1.1.1 0.0.0.0 area 0
+!
+router bgp 3
+ bgp router-id 111.33.33.33
+ bgp log-neighbor-changes
+ no bgp default route-target filter
+ neighbor 111.44.44.44 remote-as 3
+ neighbor 111.44.44.44 update-source Loopback0
+ neighbor 111.111.111.111 remote-as 65001
+ neighbor 111.111.111.111 ebgp-multihop 10
+ neighbor 111.111.111.111 disable-connected-check
+ neighbor 111.111.111.111 update-source Loopback0
+ neighbor 222.222.222.222 remote-as 65001
+ neighbor 222.222.222.222 ebgp-multihop 10
+ neighbor 222.222.222.222 disable-connected-check
+ neighbor 222.222.222.222 update-source Loopback0
+ !
+ address-family vpnv4
+  import l2vpn evpn re-originate stitching-rt
+  neighbor 111.44.44.44 activate
+  neighbor 111.44.44.44 send-community both
+  neighbor 111.44.44.44 next-hop-self all
+ exit-address-family
+ !
+ address-family l2vpn evpn
+  import vpnv4 unicast re-originate
+  neighbor 111.111.111.111 activate
+  neighbor 111.111.111.111 send-community both
+  neighbor 111.111.111.111 soft-reconfiguration inbound
+  neighbor 222.222.222.222 activate
+  neighbor 222.222.222.222 send-community both
+  neighbor 222.222.222.222 soft-reconfiguration inbound
+  neighbor 222.222.222.222 route-map DENY-REMOTE-HOST-ROUTES in
+  neighbor 222.222.222.222 route-map PREPEND out
+ exit-address-family
+ !
+!
+threat-visibility
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip route vrf mgmt 0.0.0.0 0.0.0.0 10.50.128.10
+!
+ip ssh version 2
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+ip access-list extended ANY
+ permit ip any any
+!
+!
+ip prefix-list HOST-ROUTES seq 5 permit 0.0.0.0/0 ge 32
+!
+!
+route-map DENY-REMOTE-HOST-ROUTES deny 10
+ match ip address prefix-list HOST-ROUTES
+!
+route-map DENY-REMOTE-HOST-ROUTES permit 20
+ match ip address ANY
+!
+route-map PREPEND permit 10
+ set as-path prepend 3 3 3 3 3
+!
+!
+control-plane
+!     
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 90 0
+ privilege level 15
+ login local
+ transport preferred ssh
+ transport input ssh
+!
+ntp server 173.38.201.115
+opflex agent
+ service vxlan-evpn
+  nve-id 1
+  bdi-ip 100.2.1.1 255.255.255.0
+ domain FabricP1
+  identity dci-[111.33.33.33]
+  peer Spine2 ip-address 222.222.222.222 tcp-port 8009 src-ip-address 111.33.33.33
+  peer Spine1 ip-address 111.111.111.111 tcp-port 8009 src-ip-address 111.33.33.33
+!
+!
+end
