@@ -1,8 +1,8 @@
-Current configuration : 5511 bytes
+Current configuration : 5512 bytes
 !
-! Last configuration change at 16:16:01 CEST Mon Jul 31 2017
+! Last configuration change at 15:26:00 CEST Fri Aug 25 2017 by admin
 !
-version 16.5
+version 16.6
 service config
 service timestamps debug datetime msec
 service timestamps log datetime msec
@@ -11,10 +11,12 @@ platform qfp utilization monitor load 80
 no platform punt-keepalive disable-kernel-core
 platform console auto
 !
-hostname BGP-WAN-GOLF
+hostname BGP-WAN-PE
 !
 boot-start-marker
+boot system bootflash:csr1000v-universalk9.16.06.01.SPA.bin
 boot-end-marker
+!
 !
 vrf definition joe
  rd 5:5
@@ -40,18 +42,17 @@ clock summer-time CEST date Mar 2 2017 2:00 Nov 1 2035 2:00
 no ip domain lookup
 ip domain name cisco.com
 !
-!         
+!
 subscriber templating
 ! 
 !
 multilink bundle-name authenticated
 !
-domain Fabric1
+domain Fabric1        
 !
 !
 license udi pid CSR1000V sn 9ZP3GDRH0GN
 diagnostic bootup level minimal
-!
 spanning-tree extend system-id
 !
 !
@@ -61,7 +62,7 @@ redundancy
 !
 !
 cdp run
-!
+! 
 !
 interface Loopback0
  description used for setting up manual BGP to Both GOLF Routers
@@ -72,6 +73,9 @@ interface Loopback3
  ip address 172.1.1.1 255.255.255.255
 !
 interface Loopback4
+ no ip address
+!
+interface Loopback33
  no ip address
 !
 interface GigabitEthernet1
@@ -115,23 +119,20 @@ router bgp 3
  neighbor 222.33.33.33 update-source Loopback0
  !
  address-family vpnv4
-  import l2vpn evpn re-originate stitching-rt
   neighbor 111.33.33.33 activate
   neighbor 111.33.33.33 send-community both
-  neighbor 111.33.33.33 next-hop-self all
   neighbor 222.33.33.33 activate
   neighbor 222.33.33.33 send-community both
-  neighbor 222.33.33.33 next-hop-self all
  exit-address-family
  !
  address-family ipv4 vrf joe
   redistribute connected
+  maximum-paths ibgp 3
  exit-address-family
 !
-threat-visibility
 !
 virtual-service csr_mgmt
-!
+!         
 ip forward-protocol nd
 ip http server
 ip http authentication local
@@ -143,11 +144,8 @@ ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
 ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
 !
 !
-route-map PREPEND permit 10
-!
-!
 control-plane
-!         
+!
 !
 line con 0
  stopbits 1
@@ -161,4 +159,4 @@ line vty 0 4
 ntp server 173.38.201.115
 !
 !
-end
+end 
