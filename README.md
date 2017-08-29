@@ -8,9 +8,9 @@ Please review the topology I have below.  Note that this does not represent a tr
 <p>
 <I>Shout out to Max Ardica and Soumitra Mukherji (both Cisco).  All of my examples are based on their original work on the topic.</I>
 <p>
-<a href="https://github.com/joezersk/aci-golf/blob/master/Running-Config-GOLF-WEST">Repo link to running-config of GOLF-WEST</a>
+<a href="https://github.com/joezersk/aci-golf/blob/master/Running-Config-GOLF-WEST">Repo link to running-config of GOLF-WEST Day-0 configuration</a>
 <p>
-<a href="https://github.com/joezersk/aci-golf/blob/master/Running-Config-GOLF-EAST">Repo link to running-config of GOLF-EAST</a>
+<a href="https://github.com/joezersk/aci-golf/blob/master/Running-Config-GOLF-EAST">Repo link to running-config of GOLF-EAST Day-0 configuration</a>
 <p>
 <a href="https://github.com/joezersk/aci-golf/blob/master/running-config-MPLS-PE">Repo link to running-config of MPLS-PE</a>
 <p>
