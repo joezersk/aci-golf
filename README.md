@@ -1,5 +1,10 @@
 # aci-golf
 <P>
+<B>UPDATE OCT 2017</B>
+<P>
+<I>The response to my ACI videos and this repo has grown beyond my intial expectations and I am truly flattered.  That is good news for ACI but it brings a problem too.  The configs you see here are examples only.  What is germaine to my own lab and config style might not exactly match your environment.  My only sincere request is not to take what you find here verbatim, but use it, and review the configs in the context of your own setup and make appropiate decisons to adapt it for what works for you.  Ask questions!  Does this config make sense for me?  Should I use a different mask, etc etc.
+</I>
+<P>
 This repo contains the sample running configurations of ACI GOLF Routers, which are peering with the fabric spines across an existing multipod setup.  I also include an optional configuration for an MPLS-PE router, which is not integrated with ACI but used to simulate a greater WAN network and test routing and connectivity towards ACI via the GOLF routers.  
 <p>
 All example routers are based on the Cisco CSR1Kv virtual router, which is not supported in GOLF production environments, but is suitable for design and lab testing.  I am using the freely downloadable demo version, which is limited in capability, but still able to run GOLF.
